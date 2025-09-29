@@ -1,8 +1,10 @@
+'use client';
+
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote } from '../../services/noteService';
-import type { CreateNoteParams } from '../../services/noteService';
+import { createNote } from '@/lib/api';
+import type { CreateNoteParams } from '@/types/note';
 import css from './NoteForm.module.css';
 
 interface NoteFormProps {
@@ -26,7 +28,7 @@ const initialValues: CreateNoteParams = {
 const NoteForm = ({ onClose }: NoteFormProps) => {
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
@@ -39,8 +41,12 @@ const NoteForm = ({ onClose }: NoteFormProps) => {
   };
 
   return (
-    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-      <Form className={css.form}>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      <Form className={css.form} aria-label="Create new note form">
         <div className={css.formGroup}>
           <label htmlFor="title">Title</label>
           <Field id="title" name="title" type="text" className={css.input} />
@@ -49,7 +55,13 @@ const NoteForm = ({ onClose }: NoteFormProps) => {
 
         <div className={css.formGroup}>
           <label htmlFor="content">Content</label>
-          <Field as="textarea" id="content" name="content" rows={8} className={css.textarea} />
+          <Field
+            as="textarea"
+            id="content"
+            name="content"
+            rows={8}
+            className={css.textarea}
+          />
           <ErrorMessage name="content" component="span" className={css.error} />
         </div>
 
@@ -66,11 +78,21 @@ const NoteForm = ({ onClose }: NoteFormProps) => {
         </div>
 
         <div className={css.actions}>
-          <button type="button" className={css.cancelButton} onClick={onClose}>
+          <button
+            type="button"
+            className={css.cancelButton}
+            onClick={onClose}
+            aria-label="Cancel note creation"
+          >
             Cancel
           </button>
-          <button type="submit" className={css.submitButton}>
-            Create note
+          <button
+            type="submit"
+            className={css.submitButton}
+            disabled={isPending}
+            aria-label="Submit new note"
+          >
+            {isPending ? 'Creating...' : 'Create note'}
           </button>
         </div>
       </Form>

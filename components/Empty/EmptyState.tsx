@@ -1,3 +1,5 @@
+'use client';
+
 import css from './EmptyState.module.css';
 
 const EmptyState = () => {

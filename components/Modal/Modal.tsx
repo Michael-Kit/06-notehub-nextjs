@@ -1,4 +1,6 @@
-import { useEffect } from 'react';
+'use client';
+
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import css from './Modal.module.css';
 
@@ -7,10 +9,12 @@ interface ModalProps {
   onClose: () => void;
 }
 
-const modalRoot = document.getElementById('modal-root') as HTMLElement;
-
 const Modal = ({ children, onClose }: ModalProps) => {
+  const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null);
+
   useEffect(() => {
+    setModalRoot(document.getElementById('modal-root'));
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Escape') {
         onClose();
@@ -18,11 +22,11 @@ const Modal = ({ children, onClose }: ModalProps) => {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = 'hidden'; // 🔒 Блокуємо прокрутку
+    document.body.style.overflow = 'hidden';
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset'; // 🔓 Відновлюємо прокрутку
+      document.body.style.overflow = 'unset';
     };
   }, [onClose]);
 
@@ -31,6 +35,8 @@ const Modal = ({ children, onClose }: ModalProps) => {
       onClose();
     }
   };
+
+  if (!modalRoot) return null;
 
   return createPortal(
     <div
@@ -41,7 +47,7 @@ const Modal = ({ children, onClose }: ModalProps) => {
     >
       <div className={css.modal}>{children}</div>
     </div>,
-    modalRoot
+    modalRoot,
   );
 };
 
