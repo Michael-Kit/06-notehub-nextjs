@@ -12,7 +12,7 @@ export interface Note {
 export interface NoteFormData {
   title: string;
   content: string;
-  tag: 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
+  tag: NoteTag;
 }
 
 export interface NoteFormValues {
@@ -20,8 +20,16 @@ export interface NoteFormValues {
   content: string;
   tag: NoteTag;
 }
-export interface CreateNoteParams {
-  title: string;
-  content: string;
-  tag: 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
+
+// Якщо не потрібно розділяти — видаляємо CreateNoteParams
+// export interface CreateNoteParams {
+//   title: string;
+//   content: string;
+//   tag: NoteTag;
+// }
+
+export interface UpdateNoteParams {
+  title?: string;
+  content?: string;
+  tag?: NoteTag;
 }

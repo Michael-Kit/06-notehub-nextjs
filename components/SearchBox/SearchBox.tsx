@@ -1,9 +1,10 @@
-// 'use client';
+'use client';
+
 import css from './SearchBox.module.css';
 
 interface SearchBoxProps {
   value: string;
-  onChange: (volue: string) => void;
+  onChange: (value: string) => void;
 }
 
 export default function SearchBox({ value, onChange }: SearchBoxProps) {
@@ -13,7 +14,10 @@ export default function SearchBox({ value, onChange }: SearchBoxProps) {
       type="text"
       placeholder="Search notes"
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => {
+        console.log('Typing:', e.target.value);
+        onChange(e.target.value);
+      }}
     />
   );
 }

@@ -1,5 +1,5 @@
-import type { Note, NoteFormValues } from '../types/note';
 import axios from 'axios';
+import type { Note, NoteFormValues, UpdateNoteParams } from '../types/note';
 
 interface NotesHTTPResponse {
   notes: Note[];
@@ -44,9 +44,9 @@ export const createNote = async ({
 
 export const updateNote = async (
   id: string,
-  payload: NoteFormValues,
+  payload: UpdateNoteParams,
 ): Promise<Note> => {
-  const resp = await axios.put<Note>(`/notes/${id}`, payload, authHeader);
+  const resp = await axios.patch<Note>(`/notes/${id}`, payload, authHeader);
   return resp.data;
 };
 
