@@ -1,4 +1,3 @@
-// app/notes/Notes.client.tsx
 'use client';
 
 import ErrorMessage from '@/components/Error/ErrorMessage';
@@ -9,15 +8,25 @@ import Pagination from '@/components/Pagination/Pagination';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import { fetchNotes } from '@/lib/api';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { useDebouncedCallback } from 'use-debounce';
 import css from './NotesPage.module.css';
 
 export default function NotesClient() {
+  const [searchInput, setSearchInput] = useState('');
   const [topic, setTopic] = useState('');
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Debounce: оновлює topic через 500мс після останнього введення
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setTopic(searchInput);
+      setPage(1);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [searchInput]);
 
   const { data, isError, isSuccess } = useQuery({
     queryKey: ['notes', topic, page],
@@ -36,15 +45,10 @@ export default function NotesClient() {
     setIsModalOpen(false);
   }
 
-  const updateSearchWord = useDebouncedCallback((searchWord: string) => {
-    setTopic(searchWord);
-    setPage(1);
-  }, 500);
-
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox value={topic} onChange={updateSearchWord} />
+        <SearchBox value={searchInput} onChange={setSearchInput} />
         {isSuccess && totalPages > 1 && (
           <Pagination
             totalPages={totalPages}
